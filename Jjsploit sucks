@@ -1,0 +1,121 @@
+-- Send a notification for the user
+if pcall(function()
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Wassup",
+        Text = "Script Doesn't Work With Dozer",
+        Duration = 3
+    })
+end) then
+    print("Notification sent")
+else
+    print("Error sending notification")
+end
+
+-- Function to adjust ParticleEmitter rate
+workspace.DescendantAdded:Connect(function(descendant)
+    if descendant:IsA("ParticleEmitter") then
+        -- Adjust rate of particle emitters
+        local success, err = pcall(function()
+            descendant.Rate = descendant.Rate * 10
+        end)
+        if not success then
+            warn("Error adjusting particle rate: " .. err)
+        end
+    end
+end)
+
+-- Function to detect and activate door based on name of the descendant
+workspace.DescendantAdded:Connect(function(descendant)
+    if descendant.Name == "base" and descendant:IsA("BasePart") then
+        local player = game.Players.LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            -- Moving the door to the player's position
+            descendant.CFrame = player.Character.HumanoidRootPart.CFrame
+
+            -- Sending a notification that the lever has been activated
+            if pcall(function()
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "Activated Levers",
+                    Text = "Door Is Opened",
+                    Duration = 3
+                })
+            end) then
+                print("Lever activated and notification sent")
+            else
+                warn("Error sending notification for activated lever")
+            end
+        end
+    end
+end)
+
+-- Removing specific descendants from workspace
+workspace.DescendantAdded:Connect(function(descendant)
+    if descendant.Name == "eye" or descendant.Name == "elkman" or descendant.Name == "Rush" or descendant.Name == "Worm" or descendant.Name == "eyePrime" then
+        -- Safe removal of these objects from workspace
+        local success, err = pcall(function()
+            descendant:Destroy()
+        end)
+        if not success then
+            warn("Error destroying descendant: " .. err)
+        end
+    end
+end)
+
+-- Destroying certain objects from ReplicatedStorage
+local RS = game:GetService("ReplicatedStorage")
+
+local success, err = pcall(function()
+    RS.eyegui:Destroy()
+    RS.smilegui:Destroy()
+    RS.SendRush:Destroy()
+    RS.SendWorm:Destroy()
+    RS.SendSorrow:Destroy()
+    RS.SendGoatman:Destroy()
+end)
+if not success then
+    warn("Error destroying ReplicatedStorage objects: " .. err)
+end
+
+-- Waiting briefly before destroying additional objects
+task.wait(0.1)
+
+success, err = pcall(function()
+    RS.Worm:Destroy()
+    RS.elkman:Destroy()
+end)
+if not success then
+    warn("Error destroying Worm or Elkman: " .. err)
+end
+
+task.wait(0.1)
+
+success, err = pcall(function()
+    RS.QuickNotes.Eye:Destroy()
+    RS.QuickNotes.Rush:Destroy()
+    RS.QuickNotes.Sorrow:Destroy()
+    RS.QuickNotes.elkman:Destroy()
+    RS.QuickNotes.EyePrime:Destroy()
+    RS.QuickNotes.SlugFish:Destroy()
+    RS.QuickNotes.FakeDoor:Destroy()
+    RS.QuickNotes.SleepyHead:Destroy()
+end)
+if not success then
+    warn("Error destroying QuickNotes: " .. err)
+end
+
+-- Loop to keep destroying the smilegui in PlayerGui
+while true do
+    local players = game:GetService("Players")
+    local plr = players.LocalPlayer
+    local SmileGui = plr:WaitForChild("PlayerGui"):WaitForChild("smilegui")
+    if SmileGui then
+        -- Attempt to destroy SmileGui and handle errors
+        local success, err = pcall(function()
+            SmileGui:Destroy()
+        end)
+        if not success then
+            warn("Error destroying smilegui: " .. err)
+        end
+    end
+    task.wait(0.1)
+end
